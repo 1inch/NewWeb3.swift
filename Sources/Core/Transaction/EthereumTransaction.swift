@@ -437,7 +437,7 @@ extension EthereumSignedTransaction {
             rawTxBytes.removeFirst()
         }
         do {
-            var rlp = try RLPDecoder().decode(rawTxBytes)
+            let rlp = try RLPDecoder().decode(rawTxBytes)
             
             try self.init(rlp: rlp)
         } catch {
