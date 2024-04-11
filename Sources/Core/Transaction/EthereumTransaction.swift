@@ -93,6 +93,58 @@ public struct EthereumTransaction: Codable {
 
 
     // MARK: - Convenient functions
+    
+    public func rawRLP(chainId: EthereumQuantity) throws -> Bytes {
+        if chainId.quantity == BigUInt(0) {
+            throw EthereumSignedTransaction.Error.chainIdNotSet(msg: "EIP1559 transactions need a chainId")
+        }
+
+        switch transactionType {
+        case .legacy:
+            // These values are required for signing
+            guard let nonce = nonce, let gasPrice = gasPrice, let gasLimit = gasLimit, let value = value else {
+                throw EthereumSignedTransaction.Error.transactionInvalid
+            }
+            let rlp = RLPItem(
+                nonce: nonce,
+                gasPrice: gasPrice,
+                gasLimit: gasLimit,
+                to: to,
+                value: value,
+                data: data,
+                v: chainId,
+                r: 0,
+                s: 0
+            )
+            let rawRlp = try RLPEncoder().encode(rlp)
+            return rawRlp
+        case .eip1559:
+            // These values are required for signing
+            guard let nonce = nonce, let maxFeePerGas = maxFeePerGas, let maxPriorityFeePerGas = maxPriorityFeePerGas,
+                  let gasLimit = gasLimit, let value = value else {
+                throw EthereumSignedTransaction.Error.transactionInvalid
+            }
+
+            let rlp = RLPItem(
+                nonce: nonce,
+                gasPrice: gasPrice,
+                maxFeePerGas: maxFeePerGas,
+                maxPriorityFeePerGas: maxPriorityFeePerGas,
+                gasLimit: gasLimit,
+                to: to,
+                value: value,
+                data: data,
+                chainId: chainId,
+                accessList: accessList,
+                transactionType: transactionType
+            )
+            let rawRlp = try RLPEncoder().encode(rlp)
+            var messageToSign = Bytes()
+            messageToSign.append(0x02) // TransactionType
+            messageToSign.append(contentsOf: rawRlp)
+            return messageToSign
+        }
+    }
 
     /**
      * Signs this transaction with the given private key and returns an instance of `EthereumSignedTransaction`
@@ -100,14 +152,27 @@ public struct EthereumTransaction: Codable {
      * The `transactionType` property of this `EthereumTransaction` defines the type of signature that will be generated.
      *
      * - parameter privateKey: The private key for the new signature.
-     * - parameter chainId: Optional chainId as described in EIP155.
+     * - parameter chainId: The chainId as described in EIP155.
      */
-    public func sign(with privateKey: EthereumPrivateKey, chainId: EthereumQuantity = 0) throws -> EthereumSignedTransaction {
+    public func sign(with privateKey: EthereumPrivateKey, chainId: EthereumQuantity) throws -> EthereumSignedTransaction {
+        let rawRLP = try rawRLP(chainId: chainId)
+        let signature = try privateKey.sign(message: rawRLP)
+        return try signedTransaction(signature: signature, chainId: chainId)
+    }
+    
+    public func signedTransaction(
+        signature: (v: UInt, r: Bytes, s: Bytes),
+        chainId: EthereumQuantity
+    ) throws -> EthereumSignedTransaction {
+        if chainId.quantity == BigUInt(0) {
+            throw EthereumSignedTransaction.Error.chainIdNotSet(msg: "EIP1559 transactions need a chainId")
+        }
+        
         switch transactionType {
         case .legacy:
-            return try signLegacy(with: privateKey, chainId: chainId)
+            return try signedLegacyTransaction(signature: signature, chainId: chainId)
         case .eip1559:
-            return try signEip1559(with: privateKey, chainId: chainId)
+            return try signedEIP1559Transaction(signature: signature, chainId: chainId)
         }
     }
 
@@ -117,27 +182,13 @@ public struct EthereumTransaction: Codable {
      * This function uses the legacy transaction type (or EIP155 if chainId is specified).
      *
      * - parameter privateKey: The private key for the new signature.
-     * - parameter chainId: Optional chainId as described in EIP155.
+     * - parameter chainId: The chainId as described in EIP155.
      */
-    private func signLegacy(with privateKey: EthereumPrivateKey, chainId: EthereumQuantity = 0) throws -> EthereumSignedTransaction {
-        // These values are required for signing
+    private func signedLegacyTransaction(signature: (v: UInt, r: Bytes, s: Bytes), chainId: EthereumQuantity) throws -> EthereumSignedTransaction {
         guard let nonce = nonce, let gasPrice = gasPrice, let gasLimit = gasLimit, let value = value else {
             throw EthereumSignedTransaction.Error.transactionInvalid
         }
-        let rlp = RLPItem(
-            nonce: nonce,
-            gasPrice: gasPrice,
-            gasLimit: gasLimit,
-            to: to,
-            value: value,
-            data: data,
-            v: chainId,
-            r: 0,
-            s: 0
-        )
-        let rawRlp = try RLPEncoder().encode(rlp)
-        let signature = try privateKey.sign(message: rawRlp)
-
+        
         let v: BigUInt
         if chainId.quantity == 0 {
             v = BigUInt(signature.v) + BigUInt(27)
@@ -173,42 +224,11 @@ public struct EthereumTransaction: Codable {
      * - parameter privateKey: The private key for the new signature.
      * - parameter chainId: chainId as described in EIP155. Not optional. Throws on 0.
      */
-    private func signEip1559(with privateKey: EthereumPrivateKey, chainId: EthereumQuantity) throws -> EthereumSignedTransaction {
-        // These values are required for signing
+    private func signedEIP1559Transaction(signature: (v: UInt, r: Bytes, s: Bytes), chainId: EthereumQuantity) throws -> EthereumSignedTransaction {
         guard let nonce = nonce, let maxFeePerGas = maxFeePerGas, let maxPriorityFeePerGas = maxPriorityFeePerGas,
               let gasLimit = gasLimit, let value = value else {
             throw EthereumSignedTransaction.Error.transactionInvalid
         }
-
-        // If gasPrice is set, make sure it matches the EIP1559 fees. Otherwise the usage results in unexpected behaviour.
-        if let gasPrice = gasPrice {
-            if gasPrice.quantity != maxFeePerGas.quantity {
-                throw EthereumSignedTransaction.Error.gasPriceMismatch(msg: "EIP1559 - gasPrice != maxFeePerGas")
-            }
-        }
-
-        if chainId.quantity == BigUInt(0) {
-            throw EthereumSignedTransaction.Error.chainIdNotSet(msg: "EIP1559 transactions need a chainId")
-        }
-
-        let rlp = RLPItem(
-            nonce: nonce,
-            gasPrice: gasPrice ?? EthereumQuantity(integerLiteral: 0),
-            maxFeePerGas: maxFeePerGas,
-            maxPriorityFeePerGas: maxPriorityFeePerGas,
-            gasLimit: gasLimit,
-            to: to,
-            value: value,
-            data: data,
-            chainId: chainId,
-            accessList: accessList,
-            transactionType: transactionType
-        )
-        let rawRlp = try RLPEncoder().encode(rlp)
-        var messageToSign = Bytes()
-        messageToSign.append(0x02)
-        messageToSign.append(contentsOf: rawRlp)
-        let signature = try privateKey.sign(message: messageToSign)
 
         let v = BigUInt(signature.v)
         let r = BigUInt(signature.r)
@@ -216,7 +236,7 @@ public struct EthereumTransaction: Codable {
 
         return EthereumSignedTransaction(
             nonce: nonce,
-            gasPrice: gasPrice ?? EthereumQuantity(integerLiteral: 0),
+            gasPrice: gasPrice,
             maxFeePerGas: maxFeePerGas,
             maxPriorityFeePerGas: maxPriorityFeePerGas,
             gasLimit: gasLimit,
@@ -241,7 +261,7 @@ public struct EthereumSignedTransaction {
     public let nonce: EthereumQuantity
 
     /// Gas price provided Wei
-    public let gasPrice: EthereumQuantity
+    public let gasPrice: EthereumQuantity?
 
     /// Max Fee per Gas as defined in EIP1559. Only required for EIP1559 transactions.
     public var maxFeePerGas: EthereumQuantity?
@@ -303,7 +323,7 @@ public struct EthereumSignedTransaction {
      */
     public init(
         nonce: EthereumQuantity,
-        gasPrice: EthereumQuantity,
+        gasPrice: EthereumQuantity? = nil,
         maxFeePerGas: EthereumQuantity? = nil,
         maxPriorityFeePerGas: EthereumQuantity? = nil,
         gasLimit: EthereumQuantity,
@@ -467,7 +487,7 @@ extension RLPItem {
      */
     init(
         nonce: EthereumQuantity,
-        gasPrice: EthereumQuantity,
+        gasPrice: EthereumQuantity? = nil,
         maxFeePerGas: EthereumQuantity? = nil,
         maxPriorityFeePerGas: EthereumQuantity? = nil,
         gasLimit: EthereumQuantity,
@@ -485,7 +505,7 @@ extension RLPItem {
         case .legacy:
             self = .array(
                 .bigUInt(nonce.quantity),
-                .bigUInt(gasPrice.quantity),
+                .bigUInt(gasPrice?.quantity ?? EthereumQuantity(integerLiteral: 0).quantity),
                 .bigUInt(gasLimit.quantity),
                 .bytes(to?.rawAddress ?? Bytes()),
                 .bigUInt(value.quantity),
@@ -506,14 +526,24 @@ extension RLPItem {
             var rlpToEncode: [RLPItem] = [
                 .bigUInt(chainId?.quantity ?? EthereumQuantity(integerLiteral: 0).quantity),
                 .bigUInt(nonce.quantity),
-                .bigUInt(maxPriorityFeePerGas?.quantity ?? EthereumQuantity(integerLiteral: 0).quantity),
-                .bigUInt(maxFeePerGas?.quantity ?? EthereumQuantity(integerLiteral: 0).quantity),
+            ]
+            
+            if let maxPriorityFeePerGas, let maxFeePerGas {
+                rlpToEncode.append(.bigUInt(maxPriorityFeePerGas.quantity))
+                rlpToEncode.append(.bigUInt(maxFeePerGas.quantity))
+            }
+            else {
+                rlpToEncode.append(.bigUInt(gasPrice?.quantity ?? EthereumQuantity(integerLiteral: 0).quantity))
+            }
+            
+            rlpToEncode.append(contentsOf: [
                 .bigUInt(gasLimit.quantity),
                 .bytes(to?.rawAddress ?? Bytes()),
                 .bigUInt(value.quantity),
                 .bytes(data.bytes),
                 .array(accessListRLP),
-            ]
+            ])
+            
             if let v = v, let r = r, let s = s {
                 rlpToEncode.append(contentsOf: [
                     .bigUInt(v.quantity),
