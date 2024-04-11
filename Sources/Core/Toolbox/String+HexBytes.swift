@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CryptoSwift
 
 fileprivate let hexMapping: [String.Element: UInt8] = [
     "0": 0b0000,
@@ -98,18 +99,13 @@ extension String {
     }
 
     private func rawHex() throws -> Bytes {
-        let charArray = Array(self)
-
-        var bytes = Bytes()
-        for i in stride(from: 0, to: charArray.count, by: 2) {
-            guard let higher = hexMapping[charArray[i]], let lower = hexMapping[charArray[i + 1]] else {
+        // check if self is a valid hex string
+        for char in self {
+            if hexMapping[char] == nil {
                 throw StringHexBytesError.hexStringMalformed
             }
-            let byte: UInt8 = (higher << 4) | lower
-            bytes.append(byte)
         }
-
-        return bytes
+        return Array(hex: self)
     }
 }
 
