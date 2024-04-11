@@ -169,8 +169,8 @@ extension EthereumContract {
     /// - Parameters:
     ///   - call: An ethereum call with the data for the transaction.
     ///   - completion: completion handler with either an error or the estimated amount of gas needed.
-    public func estimateGas(_ call: EthereumCall, completion: @escaping (EthereumQuantity?, Error?) -> Void) {
-        eth.estimateGas(call: call) { response in
+    public func estimateGas(_ call: EthereumCall, block: EthereumQuantityTag? = nil, completion: @escaping (EthereumQuantity?, Error?) -> Void) {
+        eth.estimateGas(call: call, block: block) { response in
             switch response.status {
             case .success(let quantity):
                 completion(quantity, nil)

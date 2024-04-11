@@ -54,7 +54,7 @@ class EthereumCallParamsTests: QuickSpec {
                     expect(newCall?.gasPrice?.quantity) == UInt(21).gwei
                     expect(newCall?.value?.quantity) == 10
                     expect(newCall?.data?.bytes) == [0x00, 0xff]
-                    expect(newCall?.block.tagType) == .latest
+                    expect(newCall?.block?.tagType) == .latest
                 }
 
                 it("should be equatable") {
@@ -75,7 +75,7 @@ class EthereumCallParamsTests: QuickSpec {
                 }
 
                 it("should be equal") {
-                    expect(e?.block.tagType) == EthereumQuantityTag.TagType.latest
+                    expect(e?.block?.tagType) == EthereumQuantityTag.TagType.latest
                     expect(e?.from?.hex(eip55: true)) == "0x52bc44d5378309EE2abF1539BF71dE1b7d7bE3b5"
                     expect(e?.to.hex(eip55: true)) == "0x829BD824B016326A401d083B33D092293333A830"
                     expect(e?.gas?.quantity) == BigUInt(21000)

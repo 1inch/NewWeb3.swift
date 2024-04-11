@@ -15,7 +15,7 @@ public protocol SolidityFunctionHandler: AnyObject {
     var address: EthereumAddress? { get }
     func call(_ call: EthereumCall, outputs: [SolidityFunctionParameter], block: EthereumQuantityTag, completion: @escaping ([String: Any]?, Error?) -> Void)
     func send(_ transaction: EthereumTransaction, completion: @escaping (EthereumData?, Error?) -> Void)
-    func estimateGas(_ call: EthereumCall, completion: @escaping (EthereumQuantity?, Error?) -> Void)
+    func estimateGas(_ call: EthereumCall, block: EthereumQuantityTag?, completion: @escaping (EthereumQuantity?, Error?) -> Void)
 }
 
 public protocol SolidityParameter {

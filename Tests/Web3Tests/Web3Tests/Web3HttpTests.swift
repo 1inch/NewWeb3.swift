@@ -493,7 +493,7 @@ class Web3HttpTests: QuickSpec {
                             )
                         ).promise
                     }.then { call in
-                        web3.eth.estimateGas(call: call)
+                        web3.eth.estimateGas(call: call, block: nil)
                     }.done { quantity in
                         let expectedQuantity: EthereumQuantity = try .string("0x46d4")
                         it("should be the expected quantity") {

@@ -195,9 +195,9 @@ public extension Web3.Eth {
         }
     }
 
-    func estimateGas(call: EthereumCall) -> Promise<EthereumQuantity> {
+    func estimateGas(call: EthereumCall, block: EthereumQuantityTag?) -> Promise<EthereumQuantity> {
         return Promise { seal in
-            self.estimateGas(call: call) { response in
+            self.estimateGas(call: call, block: block) { response in
                 response.sealPromise(seal: seal)
             }
         }

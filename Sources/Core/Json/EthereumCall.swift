@@ -21,6 +21,14 @@ public struct EthereumCall: Codable {
 
     /// Integer of the gasPrice used for each paid gas
     public let gasPrice: EthereumQuantity?
+    
+    /// Represents the part of the tx fee that goes to the miner
+    public let maxPriorityFeePerGas: EthereumQuantity?
+
+    /// Represents the maximum amount that a user is willing to pay for their tx
+    /// (inclusive of baseFeePerGas and maxPriorityFeePerGas).
+    /// The difference between maxFeePerGas and baseFeePerGas + maxPriorityFeePerGas is "refunded" to the user.
+    public let maxFeePerGas: EthereumQuantity?
 
     /// Integer of the value send with this transaction
     public let value: EthereumQuantity?
@@ -34,6 +42,8 @@ public struct EthereumCall: Codable {
         to: EthereumAddress,
         gas: EthereumQuantity? = nil,
         gasPrice: EthereumQuantity? = nil,
+        maxPriorityFeePerGas: EthereumQuantity? = nil,
+        maxFeePerGas: EthereumQuantity? = nil,
         value: EthereumQuantity? = nil,
         data: EthereumData? = nil
         ) {
@@ -41,6 +51,8 @@ public struct EthereumCall: Codable {
         self.to = to
         self.gas = gas
         self.gasPrice = gasPrice
+        self.maxPriorityFeePerGas = maxPriorityFeePerGas
+        self.maxFeePerGas = maxFeePerGas
         self.value = value
         self.data = data
     }
@@ -72,6 +84,18 @@ public struct EthereumCallParams: Codable {
         return call.gasPrice
     }
 
+    /// Represents the part of the tx fee that goes to the miner
+    public var maxPriorityFeePerGas: EthereumQuantity? {
+        return call.maxPriorityFeePerGas
+    }
+
+    /// Represents the maximum amount that a user is willing to pay for their tx
+    /// (inclusive of baseFeePerGas and maxPriorityFeePerGas).
+    /// The difference between maxFeePerGas and baseFeePerGas + maxPriorityFeePerGas is "refunded" to the user.
+    public var maxFeePerGas: EthereumQuantity? {
+        return call.maxFeePerGas
+    }
+    
     /// Integer of the value send with this transaction
     public var value: EthereumQuantity? {
         return call.value
@@ -84,11 +108,11 @@ public struct EthereumCallParams: Codable {
     }
 
     /// Integer block number, or the string "latest", "earliest" or "pending"
-    public let block: EthereumQuantityTag
+    public let block: EthereumQuantityTag?
 
     public init(
         call: EthereumCall,
-        block: EthereumQuantityTag
+        block: EthereumQuantityTag?
     ) {
         self.call = call
         self.block = block
@@ -99,11 +123,22 @@ public struct EthereumCallParams: Codable {
         to: EthereumAddress,
         gas: EthereumQuantity? = nil,
         gasPrice: EthereumQuantity? = nil,
+        maxPriorityFeePerGas: EthereumQuantity? = nil,
+        maxFeePerGas: EthereumQuantity? = nil,
         value: EthereumQuantity? = nil,
         data: EthereumData? = nil,
-        block: EthereumQuantityTag
+        block: EthereumQuantityTag?
         ) {
-        let call = EthereumCall(from: from, to: to, gas: gas, gasPrice: gasPrice, value: value, data: data)
+        let call = EthereumCall(
+            from: from,
+            to: to,
+            gas: gas,
+            gasPrice: gasPrice,
+            maxPriorityFeePerGas: maxPriorityFeePerGas,
+            maxFeePerGas: maxFeePerGas,
+            value: value,
+            data: data
+        )
         self.init(call: call, block: block)
     }
 
@@ -122,7 +157,9 @@ public struct EthereumCallParams: Codable {
 
         try container.encode(call)
 
-        try container.encode(block)
+        if let block {
+            try container.encode(block)
+        }
     }
 }
 
@@ -135,6 +172,8 @@ extension EthereumCall: Equatable {
             && lhs.to == rhs.to
             && lhs.gas == rhs.gas
             && lhs.gasPrice == rhs.gasPrice
+            && lhs.maxPriorityFeePerGas == rhs.maxPriorityFeePerGas
+            && lhs.maxFeePerGas == rhs.maxFeePerGas
             && lhs.value == rhs.value
             && lhs.data == rhs.data
     }
@@ -156,6 +195,8 @@ extension EthereumCall: Hashable {
         hasher.combine(to)
         hasher.combine(gas)
         hasher.combine(gasPrice)
+        hasher.combine(maxPriorityFeePerGas)
+        hasher.combine(maxFeePerGas)
         hasher.combine(value)
         hasher.combine(data)
     }

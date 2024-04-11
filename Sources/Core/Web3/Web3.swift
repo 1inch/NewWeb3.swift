@@ -331,12 +331,16 @@ public struct Web3 {
             properties.provider.send(request: req, response: response)
         }
 
-        public func estimateGas(call: EthereumCall, response: @escaping Web3ResponseCompletion<EthereumQuantity>) {
-            let req = RPCRequest<[EthereumCall]>(
+        public func estimateGas(
+            call: EthereumCall,
+            block: EthereumQuantityTag?,
+            response: @escaping Web3ResponseCompletion<EthereumQuantity>
+        ) {
+            let req = RPCRequest<EthereumCallParams>(
                 id: properties.rpcId,
                 jsonrpc: Web3.jsonrpc,
                 method: "eth_estimateGas",
-                params: [call]
+                params: EthereumCallParams(call: call, block: block)
             )
 
             properties.provider.send(request: req, response: response)

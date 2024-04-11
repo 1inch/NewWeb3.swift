@@ -63,7 +63,16 @@ public protocol SolidityInvocation {
     )
     
     /// Estimate how much gas is needed to execute this transaction.
-    func estimateGas(from: EthereumAddress?, gas: EthereumQuantity?, value: EthereumQuantity?, completion: @escaping (EthereumQuantity?, Error?) -> Void)
+    func estimateGas(
+        from: EthereumAddress?,
+        gas: EthereumQuantity?,
+        gasPrice: EthereumQuantity?,
+        maxPriorityFeePerGas: EthereumQuantity?,
+        maxFeePerGas: EthereumQuantity?,
+        value: EthereumQuantity?,
+        block: EthereumQuantityTag?,
+        completion: @escaping (EthereumQuantity?, Error?) -> Void
+    )
     
     /// Encodes the ABI for this invocation
     func encodeABI() -> EthereumData?
@@ -320,7 +329,16 @@ public extension SolidityInvocation {
         self.call(block: .latest, completion: completion)
     }
     
-    func estimateGas(from: EthereumAddress? = nil, gas: EthereumQuantity? = nil, value: EthereumQuantity? = nil, completion: @escaping (EthereumQuantity?, Error?) -> Void) {
+    func estimateGas(
+        from: EthereumAddress? = nil,
+        gas: EthereumQuantity? = nil,
+        gasPrice: EthereumQuantity? = nil,
+        maxPriorityFeePerGas: EthereumQuantity? = nil,
+        maxFeePerGas: EthereumQuantity? = nil,
+        value: EthereumQuantity? = nil,
+        block: EthereumQuantityTag? = nil,
+        completion: @escaping (EthereumQuantity?, Error?) -> Void
+    ) {
         guard let data = encodeABI() else {
             completion(nil, InvocationError.encodingError)
             return
@@ -329,8 +347,8 @@ public extension SolidityInvocation {
             completion(nil, InvocationError.contractNotDeployed)
             return
         }
-        let call = EthereumCall(from: from, to: to, gas: gas, gasPrice: nil, value: value, data: data)
-        handler.estimateGas(call, completion: completion)
+        let call = EthereumCall(from: from, to: to, gas: gas, gasPrice: gasPrice, maxPriorityFeePerGas: maxPriorityFeePerGas, maxFeePerGas: maxFeePerGas, value: value, data: data)
+        handler.estimateGas(call, block: block, completion: completion)
     }
     
     func encodeABI() -> EthereumData? {
