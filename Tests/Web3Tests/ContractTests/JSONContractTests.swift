@@ -64,7 +64,7 @@ class DynamicContractTests: QuickSpec {
                         }
 
                         it("should be able to create a valid transaction") {
-                            let transaction = invocation.createTransaction(gasPrice: 0, gasLimit: 0, from: .testAddress)
+                            let transaction = invocation.createTransaction(gasPrice: 0, gasLimit: 0, from: .testAddress, transactionType: .legacy)
                             let generatedHexString = transaction?.data.hex()
                             expect(generatedHexString).notTo(beNil())
                         }
@@ -72,7 +72,7 @@ class DynamicContractTests: QuickSpec {
                         it("should deploy") {
                             let expectedHash = try? EthereumData(ethereumValue: "0x0e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331")
                             waitUntil { done in
-                                invocation.send(gasPrice: nil, gasLimit: 15000, from: .testAddress) { (hash, error) in
+                                invocation.send(gasPrice: nil, gasLimit: 15000, from: .testAddress, transactionType: .legacy) { (hash, error) in
                                     expect(error).to(beNil())
                                     expect(hash).to(equal(expectedHash))
                                     done()

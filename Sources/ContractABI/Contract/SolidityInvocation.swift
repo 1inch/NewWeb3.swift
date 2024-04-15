@@ -171,7 +171,7 @@ public struct SolidityPayableInvocation: SolidityInvocation {
         from: EthereumAddress? = nil,
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: EthereumTransaction.TransactionType = .legacy
+        transactionType: EthereumTransaction.TransactionType
     ) -> EthereumTransaction? {
         guard let data = encodeABI() else { return nil }
         guard let to = handler.address else { return nil }
@@ -208,7 +208,7 @@ public struct SolidityPayableInvocation: SolidityInvocation {
         from: EthereumAddress,
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: EthereumTransaction.TransactionType = .legacy,
+        transactionType: EthereumTransaction.TransactionType,
         completion: @escaping (EthereumData?, Error?) -> Void
     ) {
         guard handler.address != nil else {
@@ -257,7 +257,7 @@ public struct SolidityNonPayableInvocation: SolidityInvocation {
         from: EthereumAddress? = nil,
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: EthereumTransaction.TransactionType = .legacy
+        transactionType: EthereumTransaction.TransactionType
     ) -> EthereumTransaction? {
         guard let data = encodeABI() else { return nil }
         guard let to = handler.address else { return nil }
@@ -294,7 +294,7 @@ public struct SolidityNonPayableInvocation: SolidityInvocation {
         from: EthereumAddress,
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: EthereumTransaction.TransactionType = .legacy,
+        transactionType: EthereumTransaction.TransactionType,
         completion: @escaping (EthereumData?, Error?) -> Void
     ) {
         guard handler.address != nil else {
@@ -384,7 +384,7 @@ public struct SolidityConstructorInvocation {
         from: EthereumAddress? = nil,
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: EthereumTransaction.TransactionType = .legacy
+        transactionType: EthereumTransaction.TransactionType
     ) -> EthereumTransaction? {
         guard let data = encodeABI() else { return nil }
 
@@ -412,7 +412,7 @@ public struct SolidityConstructorInvocation {
         from: EthereumAddress,
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: EthereumTransaction.TransactionType = .legacy,
+        transactionType: EthereumTransaction.TransactionType,
         completion: @escaping (EthereumData?, Error?) -> Void
     ) {
         guard payable == true || value == nil || value == 0 else {

@@ -76,7 +76,7 @@ public struct EthereumTransaction: Codable {
         value: EthereumQuantity? = nil,
         data: EthereumData = EthereumData([]),
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: TransactionType = .legacy
+        transactionType: TransactionType
     ) {
         self.nonce = nonce
         self.gasPrice = gasPrice
@@ -114,7 +114,8 @@ public struct EthereumTransaction: Codable {
                 data: data,
                 v: chainId,
                 r: 0,
-                s: 0
+                s: 0,
+                transactionType: transactionType
             )
             let rawRlp = try RLPEncoder().encode(rlp)
             return rawRlp
@@ -212,7 +213,8 @@ public struct EthereumTransaction: Codable {
             v: EthereumQuantity(quantity: v),
             r: EthereumQuantity(quantity: r),
             s: EthereumQuantity(quantity: s),
-            chainId: chainId
+            chainId: chainId,
+            transactionType: transactionType
         )
     }
 
@@ -335,7 +337,7 @@ public struct EthereumSignedTransaction {
         s: EthereumQuantity,
         chainId: EthereumQuantity,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: EthereumTransaction.TransactionType = .legacy
+        transactionType: EthereumTransaction.TransactionType
     ) {
         self.nonce = nonce
         self.gasPrice = gasPrice
@@ -394,7 +396,8 @@ public struct EthereumSignedTransaction {
             data: data,
             v: chainId,
             r: 0,
-            s: 0
+            s: 0,
+            transactionType: transactionType
         )
         if let _ = try? EthereumPublicKey(message: RLPEncoder().encode(rlp), v: EthereumQuantity(quantity: recId), r: r, s: s) {
             return true
@@ -499,7 +502,7 @@ extension RLPItem {
         s: EthereumQuantity? = nil,
         chainId: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: EthereumTransaction.TransactionType = .legacy
+        transactionType: EthereumTransaction.TransactionType
     ) {
         switch transactionType {
         case .legacy:
@@ -584,7 +587,8 @@ extension EthereumSignedTransaction: RLPItemConvertible {
                 v: EthereumQuantity(quantity: v),
                 r: EthereumQuantity(quantity: r),
                 s: EthereumQuantity(quantity: s),
-                chainId: 0
+                chainId: 0,
+                transactionType: .legacy
             )
         } else if array.count == 12 {
             // TODO: - See below

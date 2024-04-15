@@ -27,7 +27,7 @@ class TransactionTests: QuickSpec {
                     return
                 }
 
-                let tx = EthereumTransaction(nonce: 0, gasPrice: EthereumQuantity(quantity: 21.gwei), gasLimit: 21000, to: to, value: EthereumQuantity(quantity: 1.eth))
+                let tx = EthereumTransaction(nonce: 0, gasPrice: EthereumQuantity(quantity: 21.gwei), gasLimit: 21000, to: to, value: EthereumQuantity(quantity: 1.eth), transactionType: .legacy)
 
                 // Sign transaction with private key
                 let newTx = try? tx.sign(with: privateKey, chainId: 3)
@@ -137,7 +137,7 @@ class TransactionTests: QuickSpec {
                 
                 // Legacy Tx
                 
-                let tx = EthereumTransaction(nonce: 0, gasPrice: EthereumQuantity(quantity: 21.gwei), gasLimit: 21000, to: to, value: EthereumQuantity(quantity: 1.eth))
+                let tx = EthereumTransaction(nonce: 0, gasPrice: EthereumQuantity(quantity: 21.gwei), gasLimit: 21000, to: to, value: EthereumQuantity(quantity: 1.eth), transactionType: .legacy)
 
                 // Sign transaction with private key
                 let newTx = try? tx.sign(with: privateKey, chainId: 3)
@@ -214,7 +214,7 @@ class TransactionTests: QuickSpec {
                 
                 // Legacy tx
                 
-                let tx = EthereumTransaction(nonce: 0, gasPrice: EthereumQuantity(quantity: 21.gwei), gasLimit: 21000, to: to, value: EthereumQuantity(quantity: 1.eth))
+                let tx = EthereumTransaction(nonce: 0, gasPrice: EthereumQuantity(quantity: 21.gwei), gasLimit: 21000, to: to, value: EthereumQuantity(quantity: 1.eth), transactionType: .legacy)
                 let signedExpectedTx = try? tx.sign(with: privateKey, chainId: 3)
                 
                 let rawTx = try? EthereumData(ethereumValue: "0xf86c808504e3b2920082520894867aeeeed428ed9ba7f97fc7e16f16dfcf02f375880de0b6b3a76400008029a099060c9146c68716da3a79533866dc941a03b171911d675f518c97a73882f7a6a0019167adb26b602501c954e7793e798407836f524b9778f5be6ebece5fc998c6")

@@ -34,7 +34,7 @@ public extension SolidityInvocation {
         from: EthereumAddress,
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: EthereumTransaction.TransactionType = .legacy
+        transactionType: EthereumTransaction.TransactionType
     ) -> Promise<EthereumData> {
         return Promise { seal in
             self.send(
@@ -70,7 +70,7 @@ public extension SolidityConstructorInvocation {
         from: EthereumAddress,
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
-        transactionType: EthereumTransaction.TransactionType = .legacy
+        transactionType: EthereumTransaction.TransactionType
     ) -> Promise<EthereumData> {
         return Promise { seal in
             self.send(

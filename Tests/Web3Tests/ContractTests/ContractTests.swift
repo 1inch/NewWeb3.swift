@@ -101,7 +101,7 @@ class ContractTests: QuickSpec {
             describe("Constructor method") {
                 it("should be able to be deployed") {
                     waitUntil { done in
-                        contract.deploy(name: "Test Instance").send(gasPrice: nil, gasLimit: 15000, from: .testAddress, value: 0).done { hash in
+                        contract.deploy(name: "Test Instance").send(gasPrice: nil, gasLimit: 15000, from: .testAddress, value: 0, transactionType: .legacy).done { hash in
                             done()
                         }.catch { error in
                             fail()
