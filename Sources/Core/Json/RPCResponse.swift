@@ -23,7 +23,7 @@ public struct RPCResponse<Result: Codable>: Codable {
     /// The error
     public let error: Error?
 
-    public struct Error: Swift.Error, Codable {
+    public struct Error: Swift.Error, LocalizedError, Codable {
 
         /// The error code
         public let code: Int
@@ -33,7 +33,16 @@ public struct RPCResponse<Result: Codable>: Codable {
 
         /// Description
         public var localizedDescription: String {
-            return "RPC Error (\(code)) \(message)"
+            _errorMessage
+        }
+        
+        /// https://forums.swift.org/t/confusing-error-localizeddescription-output/5337/4
+        public var errorDescription: String? {
+            _errorMessage
+        }
+        
+        private var _errorMessage: String {
+            "RPC Error (\(code)) \(message)"
         }
     }
 }
