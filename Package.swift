@@ -20,11 +20,11 @@ let package = Package(
     ],
     dependencies: [
         // Core dependencies
-        .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.7.2"),
+        .package(url: "https://github.com/attaswift/BigInt.git", from: "5.4.1"),
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.8.2"),
         .package(url: "https://github.com/1inch/secp256k1.swift", from: "0.2.2"),
-        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.0.3")),
-        .package(url: "https://github.com/vapor/websocket-kit", .upToNextMajor(from: "2.6.1")),
+        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.0")),
+        .package(url: "https://github.com/vapor/websocket-kit", .upToNextMajor(from: "2.15.0")),
 
         // Test dependencies
         .package(url: "https://github.com/Quick/Quick.git", from: "5.0.1"),
