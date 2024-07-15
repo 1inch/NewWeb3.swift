@@ -20,7 +20,7 @@ let package = Package(
     ],
     dependencies: [
         // Core dependencies
-        .package(url: "https://github.com/attaswift/BigInt.git", from: "5.4.1"),
+        .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.3.0"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.8.2"),
         .package(url: "https://github.com/1inch/secp256k1.swift", from: "0.2.2"),
         .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.0")),

@@ -15,6 +15,11 @@ import BigInt
 
 class SolidityTypeTests: XCTestCase {
     
+    func testBigInt() {
+        let i = BigInt("")
+        XCTAssertEqual(i, 0)
+    }
+    
     func testDecodingStringType() {
         XCTAssertEqual(try? SolidityType("string"), .string, "String type should be parsed")
         XCTAssertEqual(SolidityType.string.stringValue, "string", "Should return the correct string representation")
