@@ -5,10 +5,10 @@ import PackageDescription
 let package = Package(
     name: "Web3",
     platforms: [
-        .macOS(.v12),
-        .iOS(.v15),
-        .tvOS(.v15),
-        .watchOS(.v8),
+        .macOS(.v13),
+        .iOS(.v16),
+        .tvOS(.v16),
+        .watchOS(.v9),
     ],
     products: [
         .library(
@@ -30,6 +30,7 @@ let package = Package(
         .package(url: "https://github.com/Quick/Quick.git", from: "5.0.1"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "10.0.0"),
         .package(url: "https://github.com/mxcl/PromiseKit.git", from: "6.18.1"),
+        .package(url: "https://github.com/Flight-School/AnyCodable.git", from: "0.6.7"),
     ],
     targets: [
         .target(
@@ -60,7 +61,12 @@ let package = Package(
                 .product(name: "Quick", package: "Quick"),
                 .product(name: "Nimble", package: "Nimble"),
                 .product(name: "PromiseKit", package: "PromiseKit"),
-            ]),
+                .product(name: "AnyCodable", package: "AnyCodable"),
+            ],
+            resources: [
+                .copy("ABITests/solidity-hashes.json"),
+            ]
+        ),
     ],
     swiftLanguageVersions: [.v5]
 )
