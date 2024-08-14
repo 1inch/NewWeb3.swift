@@ -190,7 +190,7 @@ private extension Data {
 
 private extension AnyRegexOutput.Element {
     var stringValue: String? {
-        substring != nil ? String(substring!) : nil
+        substring.map(String.init)
     }
 }
 
