@@ -11,7 +11,7 @@ public struct EthereumAccessList: Codable {
     public let gasUsed: EthereumQuantity
 }
 
-extension EthereumAccessList {
+public extension EthereumAccessList {
     var asDictionary: OrderedDictionary<EthereumAddress, [EthereumData]> {
         var dict = OrderedDictionary<EthereumAddress, [EthereumData]>()
         for entry in accessList {
