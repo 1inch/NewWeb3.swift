@@ -217,3 +217,11 @@ extension EthereumAddress: Hashable {
         try? hasher.combine(makeBytes())
     }
 }
+
+// MARK: - CustomStringConvertible
+
+extension EthereumAddress: CustomStringConvertible {
+    public var description: String {
+        hex(eip55: false)
+    }
+}

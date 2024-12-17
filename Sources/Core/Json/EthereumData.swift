@@ -67,3 +67,11 @@ extension EthereumData: Hashable {
         hasher.combine(bytes)
     }
 }
+
+// MARK: - CustomStringConvertible
+
+extension EthereumData: CustomStringConvertible {
+    public var description: String {
+        hex()
+    }
+}

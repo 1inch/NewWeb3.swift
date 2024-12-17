@@ -90,3 +90,11 @@ extension EthereumQuantity: Hashable {
         hasher.combine(quantity)
     }
 }
+
+// MARK: - CustomStringConvertible
+
+extension EthereumQuantity: CustomStringConvertible {
+    public var description: String {
+        quantity.description
+    }
+}

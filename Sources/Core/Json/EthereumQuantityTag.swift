@@ -146,3 +146,20 @@ extension EthereumQuantityTag: Hashable {
         hasher.combine(tagType)
     }
 }
+
+// MARK: - CustomStringConvertible
+
+extension EthereumQuantityTag: CustomStringConvertible {
+    public var description: String {
+        switch tagType {
+        case .block(let bigUInt):
+            "Block: \(bigUInt)"
+        case .latest:
+            "Latest"
+        case .earliest:
+            "Earliest"
+        case .pending:
+            "Pending"
+        }
+    }
+}
