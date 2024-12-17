@@ -16,6 +16,14 @@ public struct EthereumAccessList: Codable {
     }
 }
 
+// MARK: - Hashable
+
+extension EthereumAccessList.AccessListEntry: Hashable {}
+
+extension EthereumAccessList: Hashable {}
+
+// MARK: - Helpers
+
 public extension EthereumAccessList {
     var asDictionary: OrderedDictionary<EthereumAddress, [EthereumData]> {
         var dict = OrderedDictionary<EthereumAddress, [EthereumData]>()
