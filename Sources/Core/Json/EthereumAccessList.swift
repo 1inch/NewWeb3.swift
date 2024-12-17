@@ -6,9 +6,14 @@ public struct EthereumAccessList: Codable {
         public let address: EthereumAddress
         public let storageKeys: [EthereumData]
     }
-
+    
     public let accessList: [AccessListEntry]
     public let gasUsed: EthereumQuantity
+    
+    public init(accessList: [AccessListEntry], gasUsed: EthereumQuantity) {
+        self.accessList = accessList
+        self.gasUsed = gasUsed
+    }
 }
 
 public extension EthereumAccessList {
