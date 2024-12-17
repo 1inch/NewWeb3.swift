@@ -192,7 +192,7 @@ public extension Web3.Eth {
     
     func createAccessList(
         call: EthereumCall,
-        block: EthereumQuantityTag
+        block: EthereumQuantityTag?
     ) async throws -> EthereumAccessList {
         try await withCheckedThrowingContinuation { continuation in
             createAccessList(call: call, block: block) { response in

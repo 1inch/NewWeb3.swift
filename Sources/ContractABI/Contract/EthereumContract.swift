@@ -179,4 +179,20 @@ extension EthereumContract {
             }
         }
     }
+    
+    /// Creates an access list for this method
+    ///
+    /// - Parameters:
+    ///  - call: An ethereum call with the data for the transaction.
+    ///  - completion: completion handler with either an error or the access list.
+    public func createAccessList(_ call: EthereumCall, block: EthereumQuantityTag? = nil, completion: @escaping (EthereumAccessList?, Error?) -> Void) {
+        eth.createAccessList(call: call, block: block) { response in
+            switch response.status {
+            case .success(let accessList):
+                completion(accessList, nil)
+            case .failure(let error):
+                completion(nil, error)
+            }
+        }
+    }
 }
