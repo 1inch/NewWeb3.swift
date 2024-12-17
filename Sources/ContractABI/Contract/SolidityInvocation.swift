@@ -74,6 +74,18 @@ public protocol SolidityInvocation {
         completion: @escaping (EthereumQuantity?, Error?) -> Void
     )
     
+    /// Create an access list for this transaction.
+    func createAccessList(
+        from: EthereumAddress?,
+        gas: EthereumQuantity?,
+        gasPrice: EthereumQuantity?,
+        maxPriorityFeePerGas: EthereumQuantity?,
+        maxFeePerGas: EthereumQuantity?,
+        value: EthereumQuantity?,
+        block: EthereumQuantityTag?,
+        completion: @escaping (EthereumAccessList?, Error?) -> Void
+    )
+    
     /// Encodes the ABI for this invocation
     func encodeABI() -> EthereumData?
     
@@ -349,6 +361,28 @@ public extension SolidityInvocation {
         }
         let call = EthereumCall(from: from, to: to, gas: gas, gasPrice: gasPrice, maxPriorityFeePerGas: maxPriorityFeePerGas, maxFeePerGas: maxFeePerGas, value: value, data: data)
         handler.estimateGas(call, block: block, completion: completion)
+    }
+    
+    func createAccessList(
+        from: EthereumAddress? = nil,
+        gas: EthereumQuantity? = nil,
+        gasPrice: EthereumQuantity? = nil,
+        maxPriorityFeePerGas: EthereumQuantity? = nil,
+        maxFeePerGas: EthereumQuantity? = nil,
+        value: EthereumQuantity? = nil,
+        block: EthereumQuantityTag? = nil,
+        completion: @escaping (EthereumAccessList?, Error?) -> Void
+    ) {
+        guard let data = encodeABI() else {
+            completion(nil, InvocationError.encodingError)
+            return
+        }
+        guard let to = handler.address else {
+            completion(nil, InvocationError.contractNotDeployed)
+            return
+        }
+        let call = EthereumCall(from: from, to: to, gas: gas, gasPrice: gasPrice, maxPriorityFeePerGas: maxPriorityFeePerGas, maxFeePerGas: maxFeePerGas, value: value, data: data)
+        handler.createAccessList(call, block: block, completion: completion)
     }
     
     func encodeABI() -> EthereumData? {

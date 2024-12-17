@@ -51,6 +51,19 @@ public extension SolidityFunctionHandler {
             }
         }
     }
+    
+    func createAccessList(_ call: EthereumCall, block: EthereumQuantityTag?) async throws -> EthereumAccessList {
+        try await withCheckedThrowingContinuation { continuation in
+            createAccessList(call, block: block) { result, error in
+                if let result {
+                    continuation.resume(returning: result)
+                }
+                else {
+                    continuation.resume(throwing: error ?? Web3.Error.unknownError)
+                }
+            }
+        }
+    }
 }
 
 public extension SolidityInvocation {
@@ -114,6 +127,37 @@ public extension SolidityInvocation {
     ) async throws -> EthereumQuantity {
         try await withCheckedThrowingContinuation { continuation in
             estimateGas(
+                from: from,
+                gas: gas,
+                gasPrice: gasPrice,
+                maxPriorityFeePerGas: maxPriorityFeePerGas,
+                maxFeePerGas: maxFeePerGas,
+                value: value,
+                block: block
+            ) { result, error in
+                if let result {
+                    continuation.resume(returning: result)
+                }
+                else {
+                    continuation.resume(throwing: error ?? Web3.Error.unknownError)
+                }
+            }
+        }
+    }
+    
+    /// Create an access list for this transaction.
+    func createAccessList(
+        from: EthereumAddress?,
+        gas: EthereumQuantity?,
+        gasPrice: EthereumQuantity?,
+        maxPriorityFeePerGas: EthereumQuantity?,
+        maxFeePerGas: EthereumQuantity?,
+        value: EthereumQuantity?,
+        data: EthereumData?,
+        block: EthereumQuantityTag?
+    ) async throws -> EthereumAccessList {
+        try await withCheckedThrowingContinuation { continuation in
+            createAccessList(
                 from: from,
                 gas: gas,
                 gasPrice: gasPrice,

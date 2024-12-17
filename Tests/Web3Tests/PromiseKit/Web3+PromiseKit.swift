@@ -202,6 +202,14 @@ public extension Web3.Eth {
             }
         }
     }
+    
+    func createAccessList(call: EthereumCall, block: EthereumQuantityTag) -> Promise<EthereumAccessList> {
+        return Promise { seal in
+            self.createAccessList(call: call, block: block) { response in
+                response.sealPromise(seal: seal)
+            }
+        }
+    }
 
     func getBlockByHash(blockHash: EthereumData, fullTransactionObjects: Bool) -> Promise<EthereumBlockObject?> {
         return Promise { seal in

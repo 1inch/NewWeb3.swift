@@ -57,6 +57,12 @@ public extension SolidityInvocation {
             self.estimateGas(from: from, gas: gas, value: value, block: block, completion: seal.resolve)
         }
     }
+    
+    func createAccessList(from: EthereumAddress? = nil, gas: EthereumQuantity? = nil, gasPrice: EthereumQuantity? = nil, maxFeePerGas: EthereumQuantity? = nil, maxPriorityFeePerGas: EthereumQuantity? = nil, value: EthereumQuantity? = nil, block: EthereumQuantityTag? = nil) -> Promise<EthereumAccessList> {
+        return Promise { seal in
+            self.createAccessList(from: from, gas: gas, value: value, block: block, completion: seal.resolve)
+        }
+    }
 }
 
 public extension SolidityConstructorInvocation {
