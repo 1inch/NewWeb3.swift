@@ -190,6 +190,17 @@ public extension Web3.Eth {
         }
     }
     
+    func createAccessList(
+        call: EthereumCall,
+        block: EthereumQuantityTag
+    ) async throws -> EthereumAccessList {
+        try await withCheckedThrowingContinuation { continuation in
+            createAccessList(call: call, block: block) { response in
+                continuation.resume(with: response._result)
+            }
+        }
+    }
+    
     func getBlockByHash(blockHash: EthereumData, fullTransactionObjects: Bool) async throws -> EthereumBlockObject? {
         try await withCheckedThrowingContinuation { continuation in
             getBlockByHash(blockHash: blockHash, fullTransactionObjects: fullTransactionObjects) { response in

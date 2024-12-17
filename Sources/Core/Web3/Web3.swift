@@ -345,6 +345,21 @@ public struct Web3 {
 
             properties.provider.send(request: req, response: response)
         }
+        
+        public func createAccessList(
+            call: EthereumCall,
+            block: EthereumQuantityTag?,
+            response: @escaping Web3ResponseCompletion<EthereumAccessList>
+        ) {
+            let req = RPCRequest<EthereumCallParams>(
+                id: properties.rpcId,
+                jsonrpc: Web3.jsonrpc,
+                method: "eth_createAccessList",
+                params: EthereumCallParams(call: call, block: block)
+            )
+
+            properties.provider.send(request: req, response: response)
+        }
 
         public func getBlockByHash(
             blockHash: EthereumData,
