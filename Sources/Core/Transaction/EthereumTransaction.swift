@@ -90,7 +90,45 @@ public struct EthereumTransaction: Codable {
         self.accessList = accessList
         self.transactionType = transactionType
     }
-
+    
+    /**
+     * Initializes a new instance of `EthereumTransaction` with the given values.
+     *
+     * - parameter nonce: The nonce of this transaction.
+     * - parameter gasPrice: The gas price for this transaction in wei.
+     * - parameter maxFeePerGas: Max fee per gas as described in EIP1559. Only required for EIP1559 transactions.
+     * - parameter maxPriorityFeePerGas: Max Priority Fee per Gas as defined in EIP1559. Only required for EIP1559 transactions.
+     * - parameter from: The address to send from, required to send a transaction using sendTransaction()
+     * - parameter to: The address of the receiver.
+     * - parameter value: The value to be sent by this transaction in wei.
+     * - parameter data: Input data for this transaction. Defaults to [].
+     * - parameter accessList: The access list and gas limit for this transaction.
+     * - parameter transactionType: Type of this transaction. Defaults to `.legacy`.
+     */
+    public init(
+        nonce: EthereumQuantity? = nil,
+        gasPrice: EthereumQuantity? = nil,
+        maxFeePerGas: EthereumQuantity? = nil,
+        maxPriorityFeePerGas: EthereumQuantity? = nil,
+        from: EthereumAddress? = nil,
+        to: EthereumAddress? = nil,
+        value: EthereumQuantity? = nil,
+        data: EthereumData = EthereumData([]),
+        accessList: EthereumAccessList,
+        transactionType: TransactionType
+    ) {
+        self.nonce = nonce
+        self.gasPrice = gasPrice
+        self.maxFeePerGas = maxFeePerGas
+        self.maxPriorityFeePerGas = maxPriorityFeePerGas
+        self.gasLimit = accessList.gasUsed
+        self.from = from
+        self.to = to
+        self.value = value
+        self.data = data
+        self.accessList = accessList.asDictionary
+        self.transactionType = transactionType
+    }
 
     // MARK: - Convenient functions
     
