@@ -114,19 +114,19 @@ public struct EthereumTransaction: Codable {
         to: EthereumAddress? = nil,
         value: EthereumQuantity? = nil,
         data: EthereumData = EthereumData([]),
-        accessList: EthereumAccessList,
+        accessList: EthereumAccessList?,
         transactionType: TransactionType
     ) {
         self.nonce = nonce
         self.gasPrice = gasPrice
         self.maxFeePerGas = maxFeePerGas
         self.maxPriorityFeePerGas = maxPriorityFeePerGas
-        self.gasLimit = accessList.gasUsed
+        self.gasLimit = accessList?.gasUsed
         self.from = from
         self.to = to
         self.value = value
         self.data = data
-        self.accessList = accessList.asDictionary
+        self.accessList = accessList?.asDictionary ?? [:]
         self.transactionType = transactionType
     }
 
