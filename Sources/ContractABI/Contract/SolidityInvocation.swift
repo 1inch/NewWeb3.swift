@@ -70,6 +70,7 @@ public protocol SolidityInvocation {
         maxPriorityFeePerGas: EthereumQuantity?,
         maxFeePerGas: EthereumQuantity?,
         value: EthereumQuantity?,
+        accessList: EthereumAccessList.AccessList?,
         block: EthereumQuantityTag?,
         completion: @escaping (EthereumQuantity?, Error?) -> Void
     )
@@ -348,6 +349,7 @@ public extension SolidityInvocation {
         maxPriorityFeePerGas: EthereumQuantity? = nil,
         maxFeePerGas: EthereumQuantity? = nil,
         value: EthereumQuantity? = nil,
+        accessList: EthereumAccessList.AccessList?,
         block: EthereumQuantityTag? = nil,
         completion: @escaping (EthereumQuantity?, Error?) -> Void
     ) {
@@ -359,7 +361,7 @@ public extension SolidityInvocation {
             completion(nil, InvocationError.contractNotDeployed)
             return
         }
-        let call = EthereumCall(from: from, to: to, gas: gas, gasPrice: gasPrice, maxPriorityFeePerGas: maxPriorityFeePerGas, maxFeePerGas: maxFeePerGas, value: value, data: data)
+        let call = EthereumCall(from: from, to: to, gas: gas, gasPrice: gasPrice, maxPriorityFeePerGas: maxPriorityFeePerGas, maxFeePerGas: maxFeePerGas, value: value, data: data, accessList: accessList)
         handler.estimateGas(call, block: block, completion: completion)
     }
     

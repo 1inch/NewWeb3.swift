@@ -123,6 +123,7 @@ public extension SolidityInvocation {
         maxPriorityFeePerGas: EthereumQuantity?,
         maxFeePerGas: EthereumQuantity?,
         value: EthereumQuantity?,
+        accessList: EthereumAccessList.AccessList?,
         block: EthereumQuantityTag?
     ) async throws -> EthereumQuantity {
         try await withCheckedThrowingContinuation { continuation in
@@ -133,6 +134,7 @@ public extension SolidityInvocation {
                 maxPriorityFeePerGas: maxPriorityFeePerGas,
                 maxFeePerGas: maxFeePerGas,
                 value: value,
+                accessList: accessList,
                 block: block
             ) { result, error in
                 if let result {

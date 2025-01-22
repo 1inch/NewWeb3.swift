@@ -52,9 +52,9 @@ public extension SolidityInvocation {
         }
     }
 
-    func estimateGas(from: EthereumAddress? = nil, gas: EthereumQuantity? = nil, gasPrice: EthereumQuantity? = nil, maxFeePerGas: EthereumQuantity? = nil, maxPriorityFeePerGas: EthereumQuantity? = nil, value: EthereumQuantity? = nil, block: EthereumQuantityTag? = nil) -> Promise<EthereumQuantity> {
+    func estimateGas(from: EthereumAddress? = nil, gas: EthereumQuantity? = nil, gasPrice: EthereumQuantity? = nil, maxFeePerGas: EthereumQuantity? = nil, maxPriorityFeePerGas: EthereumQuantity? = nil, value: EthereumQuantity? = nil, accessList: EthereumAccessList.AccessList? = nil, block: EthereumQuantityTag? = nil) -> Promise<EthereumQuantity> {
         return Promise { seal in
-            self.estimateGas(from: from, gas: gas, value: value, block: block, completion: seal.resolve)
+            self.estimateGas(from: from, gas: gas, value: value, accessList: accessList, block: block, completion: seal.resolve)
         }
     }
     
