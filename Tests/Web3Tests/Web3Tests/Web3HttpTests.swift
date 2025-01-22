@@ -16,14 +16,14 @@ import PromiseKit
 
 class Web3HttpTests: QuickSpec {
 
-    let infuraUrl = "https://mainnet.infura.io/v3/0058461a5a1e47d3992ac9470168bcc3"
-    let infuraWsUrl = "wss://mainnet.infura.io/ws/v3/0058461a5a1e47d3992ac9470168bcc3"
+    static let infuraUrl = "https://mainnet.infura.io/v3/0058461a5a1e47d3992ac9470168bcc3"
+    static let infuraWsUrl = "wss://mainnet.infura.io/ws/v3/0058461a5a1e47d3992ac9470168bcc3"
 
     override func spec() {
         describe("http rpc requests") {
 
-            let web3 = Web3(rpcURL: infuraUrl)
-            let web3Ws: Web3! = try? Web3(wsUrl: infuraWsUrl)
+            let web3 = Web3(rpcURL: Self.infuraUrl)
+            let web3Ws: Web3! = try? Web3(wsUrl: Self.infuraWsUrl)
             if web3Ws == nil {
                 fail("should initialize ws web3")
             }

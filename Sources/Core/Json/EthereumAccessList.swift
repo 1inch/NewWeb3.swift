@@ -2,15 +2,17 @@ import Foundation
 import Collections
 
 public struct EthereumAccessList: Codable {
+    public typealias AccessList = [AccessListEntry]
+    
     public struct AccessListEntry: Codable {
         public let address: EthereumAddress
         public let storageKeys: [EthereumData]
     }
     
-    public let accessList: [AccessListEntry]
+    public let accessList: AccessList
     public let gasUsed: EthereumQuantity
     
-    public init(accessList: [AccessListEntry], gasUsed: EthereumQuantity) {
+    public init(accessList: AccessList, gasUsed: EthereumQuantity) {
         self.accessList = accessList
         self.gasUsed = gasUsed
     }

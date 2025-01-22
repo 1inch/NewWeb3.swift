@@ -36,6 +36,13 @@ public struct EthereumCall: Codable {
     /// Hash of the method signature and encoded parameters.
     /// For details see https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI
     public let data: EthereumData?
+    
+    /// Access list
+    /// The access list is a list of addresses and storage keys that the transaction plans to access.
+    /// 
+    /// https://github.com/ethereum/go-ethereum/blob/master/internal/ethapi/transaction_args.go#L63
+    /// https://github.com/ethereum/go-ethereum/blob/master/core/types/tx_access_list.go#L30
+    public let accessList: EthereumAccessList.AccessList?
 
     public init(
         from: EthereumAddress? = nil,
@@ -45,7 +52,8 @@ public struct EthereumCall: Codable {
         maxPriorityFeePerGas: EthereumQuantity? = nil,
         maxFeePerGas: EthereumQuantity? = nil,
         value: EthereumQuantity? = nil,
-        data: EthereumData? = nil
+        data: EthereumData? = nil,
+        accessList: EthereumAccessList.AccessList? = nil
         ) {
         self.from = from
         self.to = to
@@ -55,6 +63,7 @@ public struct EthereumCall: Codable {
         self.maxFeePerGas = maxFeePerGas
         self.value = value
         self.data = data
+        self.accessList = accessList
     }
 }
 
@@ -106,6 +115,10 @@ public struct EthereumCallParams: Codable {
     public var data: EthereumData? {
         return call.data
     }
+    
+    public var accessList: EthereumAccessList.AccessList? {
+        return call.accessList
+    }
 
     /// Integer block number, or the string "latest", "earliest" or "pending"
     public let block: EthereumQuantityTag?
@@ -127,6 +140,7 @@ public struct EthereumCallParams: Codable {
         maxFeePerGas: EthereumQuantity? = nil,
         value: EthereumQuantity? = nil,
         data: EthereumData? = nil,
+        accessList: EthereumAccessList.AccessList? = nil,
         block: EthereumQuantityTag?
         ) {
         let call = EthereumCall(
@@ -137,7 +151,8 @@ public struct EthereumCallParams: Codable {
             maxPriorityFeePerGas: maxPriorityFeePerGas,
             maxFeePerGas: maxFeePerGas,
             value: value,
-            data: data
+            data: data,
+            accessList: accessList
         )
         self.init(call: call, block: block)
     }
@@ -176,6 +191,7 @@ extension EthereumCall: Equatable {
             && lhs.maxFeePerGas == rhs.maxFeePerGas
             && lhs.value == rhs.value
             && lhs.data == rhs.data
+            && lhs.accessList == rhs.accessList
     }
 }
 
@@ -199,6 +215,7 @@ extension EthereumCall: Hashable {
         hasher.combine(maxFeePerGas)
         hasher.combine(value)
         hasher.combine(data)
+        hasher.combine(accessList)
     }
 }
 
