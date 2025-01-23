@@ -225,3 +225,21 @@ extension EthereumCallParams: Hashable {
         hasher.combine(call)
     }
 }
+
+extension EthereumCall: CustomStringConvertible {
+    public var description: String {
+        """
+        EthereumCall {
+            from: \(from?.description ?? "<nil>"),
+            to: \(to.description),
+            gas: \(gas?.description ?? "<nil>"),
+            gasPrice: \(gasPrice?.description ?? "<nil>"),
+            maxPriorityFeePerGas: \(maxPriorityFeePerGas?.description ?? "<nil>"),
+            maxFeePerGas: \(maxFeePerGas?.description ?? "<nil>"),
+            value: \(value?.description ?? "<nil>"),
+            data: \(data?.description ?? "<nil>"),
+            accessList: \(accessList?.description ?? "<nil>")
+        }
+        """
+    }
+}

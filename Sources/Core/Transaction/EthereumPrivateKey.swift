@@ -312,3 +312,10 @@ extension EthereumPrivateKey: Hashable {
     }
 }
 
+// MARK: - CustomStringConvertible
+
+extension EthereumPrivateKey: CustomStringConvertible {
+    public var description: String {
+        "EthereumPrivateKey: \(hex())"
+    }
+}

@@ -372,3 +372,11 @@ extension EthereumPublicKey: Hashable {
         hasher.combine(rawPublicKey)
     }
 }
+
+// MARK: - CustomStringConvertible
+
+extension EthereumPublicKey: CustomStringConvertible {
+    public var description: String {
+        "EthereumPublicKey: \(hex())"
+    }
+}

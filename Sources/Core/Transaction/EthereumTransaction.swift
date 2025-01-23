@@ -784,3 +784,46 @@ extension EthereumSignedTransaction: Hashable {
         hasher.combine(transactionType)
     }
 }
+
+extension EthereumTransaction: CustomStringConvertible {
+    public var description: String {
+        """
+        EthereumTransaction {
+            transactionType: \(transactionType.rawValue),
+            nonce: \(nonce?.description ?? "<nil>"),
+            gasPrice: \(gasPrice?.description ?? "<nil>"),
+            maxFeePerGas: \(maxFeePerGas?.description ?? "<nil>"),
+            maxPriorityFeePerGas: \(maxPriorityFeePerGas?.description ?? "<nil>"),
+            gasLimit: \(gasLimit?.description ?? "<nil>"),
+            from: \(from?.description ?? "<nil>"),
+            to: \(to?.description ?? "<nil>"),
+            value: \(value?.description ?? "<nil>"),
+            data: \(data.description),
+            accessList: \(accessList.description)
+        }
+        """
+    }
+}
+
+extension EthereumSignedTransaction: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        """
+        EthereumSignedTransaction {
+            chainId: \(chainId.description),
+            transactionType: \(transactionType.rawValue),
+            nonce: \(nonce.description),
+            gasPrice: \(gasPrice?.description ?? "<nil>"),
+            maxFeePerGas: \(maxFeePerGas?.description ?? "<nil>"),
+            maxPriorityFeePerGas: \(maxPriorityFeePerGas?.description ?? "<nil>"),
+            gasLimit: \(gasLimit.description),
+            to: \(to?.description ?? "<nil>"),
+            value: \(value.description),
+            data: \(data.description),
+            accessList: \(accessList.description),
+            v: \(v.description),
+            r: \(r.description),
+            s: \(s.description)
+        }
+        """
+    }
+}

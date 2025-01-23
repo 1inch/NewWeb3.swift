@@ -262,3 +262,20 @@ extension EthereumValue: Hashable {
         hasher.combine(valueType)
     }
 }
+
+extension EthereumValue: CustomStringConvertible {
+    public var description: String {
+        switch valueType {
+        case .string(let str):
+            return "EthereumValue string: \(str)"
+        case .int(let int):
+            return "EthereumValue int: \(int)"
+        case .bool(let bool):
+            return "EthereumValue bool: \(bool)"
+        case .array(let array):
+            return "EthereumValue array: \(array)"
+        case .nil:
+            return "EthereumValue: <nil>"
+        }
+    }
+}
