@@ -8,7 +8,7 @@
 import Foundation
 import BigInt
 
-public struct EthereumQuantity {
+public struct EthereumQuantity: Sendable {
 
     public let quantity: BigUInt
 

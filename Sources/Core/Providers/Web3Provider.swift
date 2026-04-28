@@ -9,7 +9,7 @@ import Foundation
 
 public protocol Web3Provider {
 
-    typealias Web3ResponseCompletion<Result: Codable> = (_ resp: Web3Response<Result>) -> Void
+    typealias Web3ResponseCompletion<Result: Codable> = @Sendable (_ resp: Web3Response<Result>) -> Void
 
     func send<Params, Result>(request: RPCRequest<Params>, response: @escaping Web3ResponseCompletion<Result>)
 }
@@ -20,10 +20,10 @@ public protocol Web3BidirectionalProvider: Web3Provider {
     func subscribe<Params, Result>(request: RPCRequest<Params>, response: @escaping Web3ResponseCompletion<String>, onEvent: @escaping Web3ResponseCompletion<Result>)
 
     /// Unsubscribes the given subscription id
-    func unsubscribe(subscriptionId: String, completion: @escaping (_ success: Bool) -> Void)
+    func unsubscribe(subscriptionId: String, completion: @escaping @Sendable (_ success: Bool) -> Void)
 }
 
-public struct Web3Response<Result: Codable> {
+public struct Web3Response<Result: Codable & Sendable>: Sendable {
 
     public enum Error: Swift.Error {
         // Standard
@@ -39,7 +39,7 @@ public struct Web3Response<Result: Codable> {
         case subscriptionCancelled(Swift.Error?)
     }
 
-    public enum Status<StatusResult> {
+    public enum Status<StatusResult: Sendable>: Sendable {
         case success(StatusResult)
         case failure(Swift.Error)
     }

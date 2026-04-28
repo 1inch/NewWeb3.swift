@@ -3,7 +3,7 @@ import Foundation
     import Dispatch
 #endif
 
-public final class SynchronizedArray<Element>: Sequence {
+public final class SynchronizedArray<Element>: Sequence, @unchecked Sendable {
 
     private var internalArray: [Element] = []
     private let accessQueue = DispatchQueue(label: "SynchronizedArrayAccess", attributes: .concurrent)

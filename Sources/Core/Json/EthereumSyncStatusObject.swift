@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct EthereumSyncStatusObject: Codable {
+public struct EthereumSyncStatusObject: Codable, Sendable {
 
     /// True iff the peer is syncing right now. If false, all other values will be nil
     public let syncing: Bool

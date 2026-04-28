@@ -7,10 +7,10 @@
 
 import Foundation
 import BigInt
-import Collections
+import OrderedCollections
 
-public struct EthereumTransaction: Codable {
-    public enum TransactionType: String, Codable {
+public struct EthereumTransaction: Codable, Sendable {
+    public enum TransactionType: String, Codable, Sendable {
         case legacy
         case eip1559
     }
@@ -293,7 +293,7 @@ public struct EthereumTransaction: Codable {
     }
 }
 
-public struct EthereumSignedTransaction {
+public struct EthereumSignedTransaction: Sendable {
 
     // MARK: - Properties
 

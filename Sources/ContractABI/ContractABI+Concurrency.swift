@@ -1,6 +1,6 @@
 import Foundation
 import Web3
-import Collections
+import OrderedCollections
 
 public extension Web3 {
     enum Error: Swift.Error {
