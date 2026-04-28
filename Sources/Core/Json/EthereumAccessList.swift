@@ -1,10 +1,10 @@
 import Foundation
-import Collections
+import OrderedCollections
 
-public struct EthereumAccessList: Codable {
+public struct EthereumAccessList: Codable, Sendable {
     public typealias AccessList = [AccessListEntry]
     
-    public struct AccessListEntry: Codable {
+    public struct AccessListEntry: Codable, Sendable {
         public let address: EthereumAddress
         public let storageKeys: [EthereumData]
     }

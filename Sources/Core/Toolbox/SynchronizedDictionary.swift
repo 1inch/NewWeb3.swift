@@ -3,7 +3,7 @@ import Foundation
     import Dispatch
 #endif
 
-public final class SynchronizedDictionary<KeyType: Hashable, ValueType>: Sequence, ExpressibleByDictionaryLiteral {
+public final class SynchronizedDictionary<KeyType: Hashable, ValueType>: Sequence, ExpressibleByDictionaryLiteral, @unchecked Sendable {
 
     private var internalDictionary: [KeyType: ValueType]
     private let accessQueue = DispatchQueue(label: "SynchronizedDictionaryAccess", attributes: .concurrent)

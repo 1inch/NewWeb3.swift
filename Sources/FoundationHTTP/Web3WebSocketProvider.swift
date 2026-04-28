@@ -6,7 +6,7 @@ import FoundationNetworking
 import WebSocketKit
 import NIOPosix
 
-public class Web3WebSocketProvider: Web3Provider, Web3BidirectionalProvider {
+public class Web3WebSocketProvider: Web3Provider, Web3BidirectionalProvider, @unchecked Sendable {
 
     // MARK: - Properties
 
@@ -104,7 +104,7 @@ public class Web3WebSocketProvider: Web3Provider, Web3BidirectionalProvider {
 
     // MARK: - Web3Provider
 
-    public func send<Params, Result>(request: RPCRequest<Params>, response: @escaping Web3ResponseCompletion<Result>) {
+    public func send<Params, Result: Sendable>(request: RPCRequest<Params>, response: @escaping Web3ResponseCompletion<Result>) {
         let replacedIdRequest = RPCRequest(id: self.nextId, jsonrpc: request.jsonrpc, method: request.method, params: request.params)
 
         let body: Data
@@ -117,7 +117,7 @@ public class Web3WebSocketProvider: Web3Provider, Web3BidirectionalProvider {
         }
 
         // Generic failure sender
-        let failure: (_ error: Error) -> () = { error in
+        let failure: @Sendable (_ error: Error) -> () = { error in
             let err = Web3Response<Result>(error: .serverError(error))
             response(err)
             return
@@ -133,7 +133,7 @@ public class Web3WebSocketProvider: Web3Provider, Web3BidirectionalProvider {
         self.receiveQueue.asyncAfter(deadline: DispatchTime(uptimeNanoseconds: DispatchTime.now().uptimeNanoseconds + self.timeoutNanoSeconds), execute: timeoutItem)
 
         // The response
-        let responseCompletion: (_ response: String?) -> Void = { responseString in
+        let responseCompletion: (_ response: String?) -> Void = { [decoder] responseString in
             defer {
                 // Remove from pending requests
                 self.pendingRequests[replacedIdRequest.id] = nil
@@ -154,7 +154,7 @@ public class Web3WebSocketProvider: Web3Provider, Web3BidirectionalProvider {
                     }
 
                     // Parse response
-                    guard let responseData = responseString.data(using: .utf8), let decoded = try? self.decoder.decode(RPCResponse<Result>.self, from: responseData) else {
+                    guard let responseData = responseString.data(using: .utf8), let decoded = try? decoder.decode(RPCResponse<Result>.self, from: responseData) else {
                         failure(Error.unexpectedResponse)
                         return
                     }
@@ -190,7 +190,7 @@ public class Web3WebSocketProvider: Web3Provider, Web3BidirectionalProvider {
     
     // MARK: - Web3BidirectionalProvider
     
-    public func subscribe<Params, Result>(request: RPCRequest<Params>, response: @escaping Web3ResponseCompletion<String>, onEvent: @escaping Web3ResponseCompletion<Result>) {
+    public func subscribe<Params, Result: Sendable>(request: RPCRequest<Params>, response: @escaping Web3ResponseCompletion<String>, onEvent: @escaping Web3ResponseCompletion<Result>) {
         self.send(request: request) { (_ resp: Web3Response<String>) -> Void in
             guard let subscriptionId = resp.result else {
                 let err = Web3Response<String>(error: .serverError(resp.error))
@@ -242,7 +242,7 @@ public class Web3WebSocketProvider: Web3Provider, Web3BidirectionalProvider {
         }
     }
 
-    public func unsubscribe(subscriptionId: String, completion: @escaping (_ success: Bool) -> Void) {
+    public func unsubscribe(subscriptionId: String, completion: @escaping @Sendable (_ success: Bool) -> Void) {
         let unsubscribe = BasicRPCRequest(id: 1, jsonrpc: Web3.jsonrpc, method: "eth_unsubscribe", params: [subscriptionId])
 
         self.send(request: unsubscribe) { (_ resp: Web3Response<Bool>) -> Void in

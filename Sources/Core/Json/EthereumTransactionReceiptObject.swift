@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct EthereumTransactionReceiptObject: Codable {
+public struct EthereumTransactionReceiptObject: Codable, Sendable {
 
     /// 32 Bytes - hash of the transaction.
     public let transactionHash: EthereumData

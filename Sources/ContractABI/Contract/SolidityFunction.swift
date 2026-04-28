@@ -13,20 +13,20 @@ import Foundation
 /// A class that can accept invocations and forward to Web3
 public protocol SolidityFunctionHandler: AnyObject {
     var address: EthereumAddress? { get }
-    func call(_ call: EthereumCall, outputs: [SolidityFunctionParameter], block: EthereumQuantityTag, completion: @escaping ([String: Any]?, Error?) -> Void)
-    func send(_ transaction: EthereumTransaction, completion: @escaping (EthereumData?, Error?) -> Void)
-    func estimateGas(_ call: EthereumCall, block: EthereumQuantityTag?, completion: @escaping (EthereumQuantity?, Error?) -> Void)
-    func createAccessList(_ call: EthereumCall, block: EthereumQuantityTag?, completion: @escaping (EthereumAccessList?, Error?) -> Void)
+    func call(_ call: EthereumCall, outputs: [SolidityFunctionParameter], block: EthereumQuantityTag, completion: @escaping @Sendable ([String: Any]?, Error?) -> Void)
+    func send(_ transaction: EthereumTransaction, completion: @escaping @Sendable (EthereumData?, Error?) -> Void)
+    func estimateGas(_ call: EthereumCall, block: EthereumQuantityTag?, completion: @escaping @Sendable (EthereumQuantity?, Error?) -> Void)
+    func createAccessList(_ call: EthereumCall, block: EthereumQuantityTag?, completion: @escaping @Sendable (EthereumAccessList?, Error?) -> Void)
 }
 
-public protocol SolidityParameter {
+public protocol SolidityParameter: Sendable {
     var name: String { get }
     var type: SolidityType { get }
     var components: [SolidityParameter]? { get }
 }
 
 /// Represents a value that can be passed into a function or is returned from a function
-public struct SolidityFunctionParameter: SolidityParameter {
+public struct SolidityFunctionParameter: SolidityParameter, Sendable {
     public let name: String
     public let type: SolidityType
     public let components: [SolidityParameter]?

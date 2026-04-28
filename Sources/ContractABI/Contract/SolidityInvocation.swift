@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Collections
+import OrderedCollections
 #if !Web3CocoaPods
     import Web3
 #endif
@@ -46,7 +46,7 @@ public protocol SolidityInvocation {
     ) -> EthereumTransaction?
     
     /// Read data from the blockchain. Only available for constant functions.
-    func call(block: EthereumQuantityTag, completion: @escaping ([String: Any]?, Error?) -> Void)
+    func call(block: EthereumQuantityTag, completion: @escaping @Sendable ([String: Any]?, Error?) -> Void)
     
     /// Write data to the blockchain. Only available for non-constant functions.
     func send(
@@ -59,7 +59,7 @@ public protocol SolidityInvocation {
         value: EthereumQuantity?,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]>,
         transactionType: EthereumTransaction.TransactionType,
-        completion: @escaping (EthereumData?, Error?) -> Void
+        completion: @escaping @Sendable (EthereumData?, Error?) -> Void
     )
     
     /// Estimate how much gas is needed to execute this transaction.
@@ -72,7 +72,7 @@ public protocol SolidityInvocation {
         value: EthereumQuantity?,
         accessList: EthereumAccessList.AccessList?,
         block: EthereumQuantityTag?,
-        completion: @escaping (EthereumQuantity?, Error?) -> Void
+        completion: @escaping @Sendable (EthereumQuantity?, Error?) -> Void
     )
     
     /// Create an access list for this transaction.
@@ -84,7 +84,7 @@ public protocol SolidityInvocation {
         maxFeePerGas: EthereumQuantity?,
         value: EthereumQuantity?,
         block: EthereumQuantityTag?,
-        completion: @escaping (EthereumAccessList?, Error?) -> Void
+        completion: @escaping @Sendable (EthereumAccessList?, Error?) -> Void
     )
     
     /// Encodes the ABI for this invocation
@@ -109,7 +109,7 @@ public struct SolidityReadInvocation: SolidityInvocation {
         self.handler = handler
     }
     
-    public func call(block: EthereumQuantityTag = .latest, completion: @escaping ([String: Any]?, Error?) -> Void) {
+    public func call(block: EthereumQuantityTag = .latest, completion: @escaping @Sendable ([String: Any]?, Error?) -> Void) {
         guard handler.address != nil else {
             completion(nil, InvocationError.contractNotDeployed)
             return
@@ -222,7 +222,7 @@ public struct SolidityPayableInvocation: SolidityInvocation {
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
         transactionType: EthereumTransaction.TransactionType,
-        completion: @escaping (EthereumData?, Error?) -> Void
+        completion: @escaping @Sendable (EthereumData?, Error?) -> Void
     ) {
         guard handler.address != nil else {
             completion(nil, InvocationError.contractNotDeployed)
@@ -308,7 +308,7 @@ public struct SolidityNonPayableInvocation: SolidityInvocation {
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
         transactionType: EthereumTransaction.TransactionType,
-        completion: @escaping (EthereumData?, Error?) -> Void
+        completion: @escaping @Sendable (EthereumData?, Error?) -> Void
     ) {
         guard handler.address != nil else {
             completion(nil, InvocationError.contractNotDeployed)
@@ -338,7 +338,7 @@ public extension SolidityInvocation {
     
     // Default Implementations
     
-    func call(completion: @escaping ([String: Any]?, Error?) -> Void) {
+    func call(completion: @escaping @Sendable ([String: Any]?, Error?) -> Void) {
         self.call(block: .latest, completion: completion)
     }
     
@@ -351,7 +351,7 @@ public extension SolidityInvocation {
         value: EthereumQuantity? = nil,
         accessList: EthereumAccessList.AccessList?,
         block: EthereumQuantityTag? = nil,
-        completion: @escaping (EthereumQuantity?, Error?) -> Void
+        completion: @escaping @Sendable (EthereumQuantity?, Error?) -> Void
     ) {
         guard let data = encodeABI() else {
             completion(nil, InvocationError.encodingError)
@@ -373,7 +373,7 @@ public extension SolidityInvocation {
         maxFeePerGas: EthereumQuantity? = nil,
         value: EthereumQuantity? = nil,
         block: EthereumQuantityTag? = nil,
-        completion: @escaping (EthereumAccessList?, Error?) -> Void
+        completion: @escaping @Sendable (EthereumAccessList?, Error?) -> Void
     ) {
         guard let data = encodeABI() else {
             completion(nil, InvocationError.encodingError)
@@ -449,7 +449,7 @@ public struct SolidityConstructorInvocation {
         value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
         transactionType: EthereumTransaction.TransactionType,
-        completion: @escaping (EthereumData?, Error?) -> Void
+        completion: @escaping @Sendable (EthereumData?, Error?) -> Void
     ) {
         guard payable == true || value == nil || value == 0 else {
             completion(nil, InvocationError.invalidInvocation)

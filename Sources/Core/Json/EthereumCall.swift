@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct EthereumCall: Codable {
+public struct EthereumCall: Codable, Sendable {
 
     /// The address the transaction is sent from.
     public let from: EthereumAddress?
@@ -67,7 +67,7 @@ public struct EthereumCall: Codable {
     }
 }
 
-public struct EthereumCallParams: Codable {
+public struct EthereumCallParams: Codable, Sendable {
 
     /// The actual call parameters
     public let call: EthereumCall

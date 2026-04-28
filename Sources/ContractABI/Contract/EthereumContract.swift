@@ -128,7 +128,7 @@ extension EthereumContract {
     ///   - data: EthereumData object representing the method called
     ///   - outputs: Expected return values
     ///   - completion: Completion handler
-    public func call(_ call: EthereumCall, outputs: [SolidityFunctionParameter], block: EthereumQuantityTag = .latest, completion: @escaping ([String: Any]?, Error?) -> Void) {
+    public func call(_ call: EthereumCall, outputs: [SolidityFunctionParameter], block: EthereumQuantityTag = .latest, completion: @escaping @Sendable ([String: Any]?, Error?) -> Void) {
         eth.call(call: call, block: block) { response in
             switch response.status {
             case .success(let data):
@@ -153,7 +153,7 @@ extension EthereumContract {
     ///   - gas: Maximum gas allowed for the transaction
     ///   - gasPrice: Amount of wei to spend per unit of gas
     ///   - completion: completion handler. Either the transaction's hash or an error.
-    public func send(_ transaction: EthereumTransaction, completion: @escaping (EthereumData?, Error?) -> Void) {
+    public func send(_ transaction: EthereumTransaction, completion: @escaping @Sendable (EthereumData?, Error?) -> Void) {
         eth.sendTransaction(transaction: transaction) { response in
             switch response.status {
             case .success(let hash):
@@ -169,7 +169,7 @@ extension EthereumContract {
     /// - Parameters:
     ///   - call: An ethereum call with the data for the transaction.
     ///   - completion: completion handler with either an error or the estimated amount of gas needed.
-    public func estimateGas(_ call: EthereumCall, block: EthereumQuantityTag? = nil, completion: @escaping (EthereumQuantity?, Error?) -> Void) {
+    public func estimateGas(_ call: EthereumCall, block: EthereumQuantityTag? = nil, completion: @escaping @Sendable (EthereumQuantity?, Error?) -> Void) {
         eth.estimateGas(call: call, block: block) { response in
             switch response.status {
             case .success(let quantity):
@@ -185,7 +185,7 @@ extension EthereumContract {
     /// - Parameters:
     ///  - call: An ethereum call with the data for the transaction.
     ///  - completion: completion handler with either an error or the access list.
-    public func createAccessList(_ call: EthereumCall, block: EthereumQuantityTag? = nil, completion: @escaping (EthereumAccessList?, Error?) -> Void) {
+    public func createAccessList(_ call: EthereumCall, block: EthereumQuantityTag? = nil, completion: @escaping @Sendable (EthereumAccessList?, Error?) -> Void) {
         eth.createAccessList(call: call, block: block) { response in
             switch response.status {
             case .success(let accessList):

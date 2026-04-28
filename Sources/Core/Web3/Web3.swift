@@ -9,7 +9,7 @@ import Foundation
 
 public struct Web3 {
 
-    public typealias Web3ResponseCompletion<Result: Codable> = (_ resp: Web3Response<Result>) -> Void
+    public typealias Web3ResponseCompletion<Result: Codable & Sendable> = @Sendable (_ resp: Web3Response<Result>) -> Void
     public typealias BasicWeb3ResponseCompletion = Web3ResponseCompletion<EthereumValue>
 
     public static let jsonrpc = "2.0"
@@ -593,7 +593,7 @@ public struct Web3 {
             provider.subscribe(request: req, response: subscribed, onEvent: onEvent)
         }
 
-        public func unsubscribe(subscriptionId: String, completion: @escaping (Bool) -> Void) throws {
+        public func unsubscribe(subscriptionId: String, completion: @escaping @Sendable (Bool) -> Void) throws {
             guard let provider = properties.provider as? Web3BidirectionalProvider else {
                 throw Error.providerDoesNotSupportSubscriptions
             }

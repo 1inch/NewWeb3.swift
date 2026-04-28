@@ -11,7 +11,7 @@ import Dispatch
 import FoundationNetworking
 #endif
 
-public final class Web3HttpProvider: Web3Provider {
+public final class Web3HttpProvider: Web3Provider, Sendable {
 
     let encoder = JSONEncoder()
     let decoder = JSONDecoder()
@@ -37,7 +37,7 @@ public final class Web3HttpProvider: Web3Provider {
         self.queue = DispatchQueue(label: "Web3HttpProvider", attributes: .concurrent)
     }
 
-    public func send<Params, Result>(request: RPCRequest<Params>, response: @escaping Web3ResponseCompletion<Result>) {
+    public func send<Params, Result: Sendable>(request: RPCRequest<Params>, response: @escaping Web3ResponseCompletion<Result>) {
         queue.async {
             
             let body: Data
@@ -66,7 +66,7 @@ public final class Web3HttpProvider: Web3Provider {
         }
     }
 
-    private func performRequest<Result>(
+    private func performRequest<Result: Sendable>(
         _ request: URLRequest,
         retries: Int,
         completion: @escaping Web3ResponseCompletion<Result>
@@ -142,7 +142,7 @@ private extension HTTPURLResponse {
         return nil
     }
 
-    private static var httpDateFormatter: DateFormatter = {
+    private static let httpDateFormatter: DateFormatter = {
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After#Examples
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
